@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="app">
+    <Properties>
+        <Property name="LOG_LEVEL">info</Property>
+    </Properties>
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <!--JSON pattern-->
+            <!--<PatternLayout pattern='{"date":"%d","level":"%p","class":"%c{1.}","thread":"%t","Lendico-Request-Id":"%X{Lendico-Request-Id}","message":"%m"}%n'/>-->
+
+            <!--Standart pattern-->
+            <PatternLayout pattern='%d %highlight{%p} %c{1.} [%t] [Request-Id=%X{Request-Id}] %m%n'/>
+        </Console>
+        <Async name="Async">
+            <AppenderRef ref="STDOUT"/>
+        </Async>
+    </Appenders>
+    <Loggers>
+        <Root level="${env:LOG_LEVEL}">
+            <AppenderRef ref="Async"/>
+        </Root>
+
+        <logger name="org.eclipse.jetty" level="WARN">
+            <AppenderRef ref="STDOUT" />
+        </logger>
+    </Loggers>
+
+    <DynamicThresholdFilter key="X-Log-Level" onMatch="ACCEPT" onMismatch="NEUTRAL" defaultThreshold="INFO">
+        <KeyValuePair key="TRACE" value="TRACE"/>
+        <KeyValuePair key="DEBUG" value="DEBUG"/>
+    </DynamicThresholdFilter>
+
+</Configuration>
