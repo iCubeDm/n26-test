@@ -19,15 +19,15 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.lendico.accounting_items"))
+                .apis(RequestHandlerSelectors.basePackage("com.icubedm.n26_test"))
                 .paths(PathSelectors.any())
                 .build().apiInfo(apiInfo());
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Accounting Items")
-                .description("Service for querying accounting-items")
+                .title("N26 Test Task")
+                .description("Transaction Statistics Service")
                 .version("1.0")
                 .build();
     }
