@@ -48,7 +48,7 @@ public class StatisticsRepositoryTest {
         final long now = DateTimeUtil.nowEpochMilli();
         for (int j = 0; j < 10; j++) {
 
-            final int number = new Random().nextInt(50_000_000);
+            final int number = new Random().nextInt(1_000_000);
 
             System.out.println(String.format("Test with %s requests", number));
 
