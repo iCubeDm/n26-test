@@ -25,12 +25,12 @@ class StatisticsController {
     @RequestMapping(value = "/transactions", method = POST, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> postTransaction(@RequestBody Transaction transaction) {
         if (!statisticsService.postTransaction(transaction))
-            return new ResponseEntity<>(new Message("TRANSACTION IS LATE"), NO_CONTENT);
+            return new ResponseEntity<>(NO_CONTENT);
 
         return new ResponseEntity<>(new Message("TRANSACTION PROCESSED"), CREATED);
     }
 
-    @ApiOperation(value = "Returns statistics for the past 60 secons", tags = {"Service"})
+    @ApiOperation(value = "Returns statistics for the past 60 seconds", tags = {"Service"})
     @RequestMapping(value = "/statistics", method = GET, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Statistics> getStatistics() {
         Statistics statistics = statisticsService.getStatistics();

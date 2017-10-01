@@ -68,8 +68,7 @@ public class IntegrationTest {
         logger.info("Trying to post late transaction");
         Transaction lateTx = new Transaction(100, now - 100000);
 
-        response = postTransaction(lateTx, 204);
-        assertEquals("{\"msg\":\"TRANSACTION IS LATE\"}", response);
+        postTransaction(lateTx, 204);
     }
 
     @Test
