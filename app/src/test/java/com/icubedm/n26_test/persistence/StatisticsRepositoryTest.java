@@ -33,7 +33,7 @@ public class StatisticsRepositoryTest {
         repository.addNewTransaction(tx2);
         repository.addNewTransaction(oldTx);
 
-        Statistics stat = repository.getStatistics();
+        Statistics stat = repository.getStatistics().get();
         assertEquals(3, stat.getCount());
         assertEquals(30.0, stat.getSum(), 0);
         assertEquals(10.0, stat.getAvg(), 0);
@@ -48,7 +48,7 @@ public class StatisticsRepositoryTest {
         final long now = DateTimeUtil.nowEpochMilli();
         for (int j = 0; j < 10; j++) {
 
-            final int number = new Random().nextInt(1_000_000);
+            final int number = new Random().nextInt(50_000_000);
 
             System.out.println(String.format("Test with %s requests", number));
 
@@ -74,7 +74,7 @@ public class StatisticsRepositoryTest {
             executor.shutdown();
             executor.awaitTermination(1, TimeUnit.SECONDS);
 
-            Statistics stat = repository.getStatistics();
+            Statistics stat = repository.getStatistics().get();
             assertEquals(postCounter.get(), stat.getCount());
             assertEquals(10.0 * postCounter.get(), stat.getSum(), 0);
             assertEquals(10.0, stat.getAvg(), 0);

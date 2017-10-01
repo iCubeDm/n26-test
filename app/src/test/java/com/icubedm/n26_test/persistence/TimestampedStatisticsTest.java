@@ -15,9 +15,8 @@ public class TimestampedStatisticsTest {
         long now = DateTimeUtil.nowEpochMilli();
         Transaction tx = new Transaction(12.0, now);
 
-        TimestampedStatistics timestampedStatistics = new TimestampedStatistics(now, new Statistics());
-        timestampedStatistics.addTransaction(tx);
-        Statistics statistics = timestampedStatistics.getStatistics();
+        TimestampedStatistics timestampedStatistics = new TimestampedStatistics(tx);
+        timestampedStatistics.addTransaction(tx);Statistics statistics = timestampedStatistics.getStatistics();
 
         assertEquals(12.0, statistics.getSum(), 0);
         assertEquals(12.0, statistics.getAvg(), 0);

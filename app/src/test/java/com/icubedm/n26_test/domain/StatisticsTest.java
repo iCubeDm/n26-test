@@ -26,7 +26,7 @@ public class StatisticsTest {
         double max = 123.0;
         double min = 12.0;
         long count = 23;
-        Statistics stat = new Statistics(sum, avg, max, min, count);
+        Statistics stat = new Statistics(sum, max, min, count);
 
         assertEquals(count, stat.getCount());
         assertEquals(sum, stat.getSum(), 0);

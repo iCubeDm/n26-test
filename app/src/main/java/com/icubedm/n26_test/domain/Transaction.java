@@ -23,7 +23,7 @@ public class Transaction {
         return l >= 60000;
     }
 
-    double getAmount() {
+    public double getAmount() {
         return amount;
     }
 

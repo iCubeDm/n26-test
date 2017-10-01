@@ -4,6 +4,8 @@ import java.util.Optional;
 
 public class Statistics {
 
+    public static Statistics EMPTY = new Statistics(0, 0, 0, 0);
+
     /**
      * is a double specifying
      * the total sum of transaction
@@ -40,20 +42,15 @@ public class Statistics {
      */
     private long count = 0;
 
-    public Statistics(double sum, double avg, double max, double min, long count) {
+    public Statistics(double sum, double max, double min, long count) {
         this.sum = sum;
-        this.avg = avg;
+        this.avg = sum / count;
         this.max = Optional.of(max);
         this.min = Optional.of(min);
         this.count = count;
     }
 
     public Statistics() {
-    }
-
-    public Statistics(Transaction transaction) {
-        this();
-        this.addTransaction(transaction);
     }
 
     public double getSum() {
@@ -76,23 +73,25 @@ public class Statistics {
         return count;
     }
 
-    /**
-     * @param transaction new transaction
-     * @return !!! Method returns mutated object !!!
-     */
-    public Statistics addTransaction(Transaction transaction) {
-        this.count++;
-        this.avg = (this.sum + transaction.getAmount()) / this.count;
-        this.sum += transaction.getAmount();
+    public Statistics merge(Statistics other) {
+        if (other == EMPTY) {
+            return this;
+        } else if (this == EMPTY) {
+            return other;
+        } else {
+            return new Statistics(
+                    sum + other.sum,
+                    max.isPresent()
+                            ? Math.max(this.getMax(), other.getMax())
+                            : other.getMax(),
+                    min.isPresent()
+                            ? Math.min(this.getMin(), other.getMin())
+                            : other.getMin(),
+                    count + other.count);
+        }
+    }
 
-        this.max = max.isPresent()
-                ? Optional.of(Math.max(this.max.get(), transaction.getAmount()))
-                : Optional.of(transaction.getAmount());
-
-        this.min = min.isPresent()
-                ? Optional.of(Math.min(this.min.get(), transaction.getAmount()))
-                : Optional.of(transaction.getAmount());
-
-        return this;
+    public boolean isNotEmpty() {
+        return this != EMPTY;
     }
 }
