@@ -17,12 +17,12 @@ public class Transaction {
         this.timestamp = timestamp;
     }
 
-    public boolean isLateFor(long currentEpochMillis) {
-        long l = (currentEpochMillis - timestamp) / 1000;
-        return l >= 60;
+    boolean isLateFor(long currentEpochMillis) {
+        long l = currentEpochMillis - timestamp;
+        return l >= 60000;
     }
 
-    public double getAmount() { return amount; }
+    double getAmount() { return amount; }
 
     @Override
     public String toString() {

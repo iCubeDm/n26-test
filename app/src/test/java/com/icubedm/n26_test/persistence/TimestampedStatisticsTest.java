@@ -31,8 +31,8 @@ public class TimestampedStatisticsTest {
         long now = 1000;
         TimestampedStatistics stat = new TimestampedStatistics(now, new Statistics());
 
-        assertTrue(stat.isLateFor(now+60000));
-        assertFalse(stat.isLateFor(now+59999));
+        assertTrue(stat.isLateFor(now + 60000));
+        assertFalse(stat.isLateFor(now + 59999));
     }
 
     @Test
@@ -42,10 +42,10 @@ public class TimestampedStatisticsTest {
         TimestampedStatistics stat = new TimestampedStatistics(now, new Statistics());
 
         assertTrue(stat.isSameSecond(now));
-        assertTrue(stat.isSameSecond(now+1));
-        assertTrue(stat.isSameSecond(now+999));
-        assertFalse(stat.isSameSecond(now-1));
-        assertFalse(stat.isSameSecond(now+1000));
+        assertTrue(stat.isSameSecond(now + 1));
+        assertTrue(stat.isSameSecond(now + 999));
+        assertFalse(stat.isSameSecond(now - 1));
+        assertFalse(stat.isSameSecond(now + 1000));
     }
 
     @Test

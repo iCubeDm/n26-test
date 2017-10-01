@@ -5,10 +5,6 @@
     </Properties>
     <Appenders>
         <Console name="STDOUT" target="SYSTEM_OUT">
-            <!--JSON pattern-->
-            <!--<PatternLayout pattern='{"date":"%d","level":"%p","class":"%c{1.}","thread":"%t","Lendico-Request-Id":"%X{Lendico-Request-Id}","message":"%m"}%n'/>-->
-
-            <!--Standart pattern-->
             <PatternLayout pattern='%d %highlight{%p} %c{1.} [%t] [Request-Id=%X{Request-Id}] %m%n'/>
         </Console>
         <Async name="Async">

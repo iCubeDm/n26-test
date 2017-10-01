@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class StatisticsService {
 
-    static Logger logger = LoggerFactory.getLogger(StatisticsService.class);
+    private final static Logger logger = LoggerFactory.getLogger(StatisticsService.class);
 
     @Autowired
     private StatisticsRepository statisticsRepository;

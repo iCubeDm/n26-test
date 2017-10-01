@@ -2,9 +2,6 @@ FROM java:8
 
 MAINTAINER Dmitry Yakubovsky <icubedm@gmail.com>
 
-ENV SPRING_PROFILES_ACTIVE=production \
-    TIME_RANGE_SECONDS=60 \
-
 COPY app/target/app*.jar app/app.jar
 
 WORKDIR /app

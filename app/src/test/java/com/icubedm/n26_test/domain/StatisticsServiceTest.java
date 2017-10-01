@@ -15,10 +15,10 @@ import static org.mockito.Mockito.*;
 public class StatisticsServiceTest {
 
     @Mock
-    StatisticsRepository repository;
+    private StatisticsRepository repository;
 
     @InjectMocks
-    StatisticsService service;
+    private StatisticsService service;
 
     @Before
     public void setUp() throws Exception {

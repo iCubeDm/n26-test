@@ -9,12 +9,12 @@ public class TimestampedStatistics {
     private long timestamp;
     private Statistics statistics;
 
-    public TimestampedStatistics(long epochMillis, Statistics statistics) {
+    TimestampedStatistics(long epochMillis, Statistics statistics) {
         this.timestamp = epochMillis / 1000;
         this.statistics = statistics;
     }
 
-    public void addTransaction(Transaction transaction) {
+    void addTransaction(Transaction transaction) {
         this.statistics.addTransaction(transaction);
     }
 
@@ -22,16 +22,16 @@ public class TimestampedStatistics {
         return statistics;
     }
 
-    public boolean isLateFor(long epochMillis) {
+    boolean isLateFor(long epochMillis) {
         long l = epochMillis / 1000;
         return l - this.timestamp >= 60;
     }
 
-    public boolean isSameSecond(long epochMillis) {
+    boolean isSameSecond(long epochMillis) {
         return this.timestamp == (epochMillis / 1000);
     }
 
-    public TimestampedStatistics mergeWith(TimestampedStatistics anotherStatistics) {
+    TimestampedStatistics mergeWith(TimestampedStatistics anotherStatistics) {
         Statistics anotherStat = anotherStatistics.getStatistics();
 
         long count = this.statistics.getCount() + anotherStat.getCount();

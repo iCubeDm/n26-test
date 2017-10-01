@@ -34,10 +34,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class IntegrationTest {
 
-    static Logger logger = LoggerFactory.getLogger(IntegrationTest.class);
+    private final static Logger logger = LoggerFactory.getLogger(IntegrationTest.class);
+    private final static String POST_PATH = "/transactions";
+    private final static String GET_PATH = "/statistics";
 
-    private String postPath = "/transactions";
-    private String getPath = "/statistics";
     private Gson gson = new Gson();
 
     @Autowired
@@ -109,7 +109,7 @@ public class IntegrationTest {
 
     private Statistics getStatistics() throws Exception {
 
-        String raw = mockMvc.perform(get(getPath))
+        String raw = mockMvc.perform(get(GET_PATH))
                 .andExpect(status().is(200))
                 .andReturn().getResponse()
                 .getContentAsString();
@@ -117,7 +117,7 @@ public class IntegrationTest {
     }
 
     private String postTransaction(Transaction tx, int expectedCode) throws Exception {
-        return mockMvc.perform(post(postPath)
+        return mockMvc.perform(post(POST_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(tx)))
                 .andExpect(status().is(expectedCode))
