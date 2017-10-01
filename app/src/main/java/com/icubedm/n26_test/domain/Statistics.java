@@ -46,7 +46,8 @@ public class Statistics {
         this.count = count;
     }
 
-    public Statistics() {}
+    public Statistics() {
+    }
 
     public double getSum() {
         return sum;
@@ -77,7 +78,7 @@ public class Statistics {
         this.avg = (this.sum + transaction.getAmount()) / this.count;
         this.sum += transaction.getAmount();
         this.max = Math.max(this.max, transaction.getAmount());
-        if(this.min == 0 || this.min > transaction.getAmount()) this.min = transaction.getAmount();
+        if (this.min == 0 || this.min > transaction.getAmount()) this.min = transaction.getAmount();
         return this;
     }
 }

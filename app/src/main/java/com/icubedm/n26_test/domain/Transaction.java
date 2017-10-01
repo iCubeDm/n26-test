@@ -10,7 +10,8 @@ public class Transaction {
     /**
      * used for the serialization purposes
      */
-    public Transaction() {}
+    public Transaction() {
+    }
 
     public Transaction(double amount, long timestamp) {
         this.amount = amount;
@@ -22,7 +23,9 @@ public class Transaction {
         return l >= 60000;
     }
 
-    double getAmount() { return amount; }
+    double getAmount() {
+        return amount;
+    }
 
     @Override
     public String toString() {

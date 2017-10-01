@@ -21,7 +21,7 @@ public class StatisticsService {
 
         logger.info("Received a new transaction {}", transaction);
 
-        if(transaction.isLateFor(now)){
+        if (transaction.isLateFor(now)) {
             logger.warn("Transaction {} is older than 60 second. Skipping.");
             return false;
         }
