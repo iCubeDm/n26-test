@@ -61,7 +61,7 @@ public class StatisticsRepositoryTest {
                     long randomTimestamp = now - new Random().nextInt(30) * 1000;
                     if (Math.random() > 0) {
                         repository.addNewTransaction(new Transaction(10.0, randomTimestamp));
-                        postCounter.incrementAndGet();
+                        postCounter.getAndIncrement();
                     } else {
                         repository.getStatistics();
                     }
@@ -74,7 +74,12 @@ public class StatisticsRepositoryTest {
             executor.shutdown();
             executor.awaitTermination(1, TimeUnit.SECONDS);
 
-            assertEquals(postCounter.get(), repository.getStatistics().getCount());
+            Statistics stat = repository.getStatistics();
+            assertEquals(postCounter.get(), stat.getCount());
+            assertEquals(10.0 * postCounter.get(), stat.getSum(), 0);
+            assertEquals(10.0, stat.getAvg(), 0);
+            assertEquals(10.0, stat.getMin(), 0);
+            assertEquals(10.0, stat.getMax(), 0);
         }
     }
 }
