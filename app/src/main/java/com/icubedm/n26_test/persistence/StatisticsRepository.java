@@ -42,12 +42,12 @@ public class StatisticsRepository {
     public Statistics getStatistics() {
         synchronized (storage) {
             cleanup();
+            return storage.stream()
+                    .filter(Objects::nonNull)
+                    .reduce(TimestampedStatistics::mergeWith)
+                    .orElse(new TimestampedStatistics(nowEpochMilli(), new Statistics()))
+                    .getStatistics();
         }
-        return storage.stream()
-                .filter(Objects::nonNull)
-                .reduce(TimestampedStatistics::mergeWith)
-                .orElse(new TimestampedStatistics(nowEpochMilli(), new Statistics()))
-                .getStatistics();
     }
 
     private void cleanup() {
