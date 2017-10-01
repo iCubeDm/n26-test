@@ -50,16 +50,16 @@ public class StatisticsServiceTest {
         assertFalse(success);
     }
 
-//    @Test
-//    public void testGetStatistics() {
-//
-//        Statistics stat = new Statistics();
-//
-//        when(repository.getStatistics()).thenReturn(stat);
-//
-//        Statistics result = service.getStatistics();
-//
-//        assertEquals(stat, result);
-//    }
+    @Test
+    public void testGetStatistics() {
+
+        Statistics stat = new Statistics();
+
+        when(repository.getStatistics()).thenReturn(stat);
+
+        Statistics result = service.getStatistics();
+
+        assertEquals(stat, result);
+    }
 
 }
