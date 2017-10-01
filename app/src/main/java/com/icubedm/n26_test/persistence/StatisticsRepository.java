@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,9 +21,9 @@ public class StatisticsRepository {
     /**
      * While bean in spring boot by default is in the singleton scope, we don't need to have storage to be static
      */
-    List<TimestampedStatistics> storage = Collections.synchronizedList(new ArrayList<TimestampedStatistics>(60));
+    List<TimestampedStatistics> storage = new ArrayList<>(60);
 
-    public void addNewTransaction(Transaction transaction) {
+    public synchronized void addNewTransaction(Transaction transaction) {
         cleanup();
         for (TimestampedStatistics stat : storage) {
             if (nonNull(stat) && stat.isSameSecond(transaction.getEpochMillis())) {
@@ -38,7 +37,7 @@ public class StatisticsRepository {
         );
     }
 
-    public Statistics getStatistics() {
+    public synchronized Statistics getStatistics() {
         cleanup();
         return storage.stream()
                 .filter(Objects::nonNull)
@@ -50,10 +49,12 @@ public class StatisticsRepository {
     private long cleanup() {
         long now = nowEpochMilli();
         for (int i = 0; i < storage.size(); i++) {
-            if (storage.get(i) != null && storage.get(i).isLateFor(now))
-                storage.set(i, null);
+            if(storage.get(i) == null)
+                storage.remove(i);
+            else if (storage.get(i).isLateFor(now))
+                storage.remove(i);
         }
-        logger.info("Storage cleanup is done for {}", now);
+        logger.debug("Storage cleanup is done for {}", now);
         return now;
     }
 }

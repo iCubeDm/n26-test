@@ -5,6 +5,13 @@ import com.icubedm.n26_test.domain.Transaction;
 import com.icubedm.n26_test.util.DateTimeUtil;
 import org.junit.Test;
 
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+
 import static org.junit.Assert.*;
 
 public class StatisticsRepositoryTest {
@@ -32,5 +39,39 @@ public class StatisticsRepositoryTest {
         assertEquals(10.0, stat.getAvg(), 0);
         assertEquals(10.0, stat.getMin(), 0);
         assertEquals(10.0, stat.getMax(), 0);
+    }
+
+    @Test
+    public void testConcurrentWriteRequests_ShouldRegisterEveryTransaction() throws Exception {
+
+        final long now = DateTimeUtil.nowEpochMilli();
+        final int number = new Random().nextInt(1_000_000);
+
+        System.out.println(String.format("Test with %s requests", number));
+
+        final CountDownLatch latch = new CountDownLatch(number);
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+
+        AtomicLong postCounter = new AtomicLong(0);
+
+        for (int i = 0; i < number; i++) {
+            executor.execute(() -> {
+                long randomTimestamp = now - new Random().nextInt(30) * 1000;
+                if (Math.random() > 0.5) {
+                    repository.addNewTransaction(new Transaction(10.0, randomTimestamp));
+                    postCounter.incrementAndGet();
+                } else {
+                    repository.getStatistics();
+                }
+                latch.countDown();
+            });
+        }
+
+        latch.await(2, TimeUnit.SECONDS);
+
+        executor.shutdown();
+        executor.awaitTermination(100, TimeUnit.MILLISECONDS);
+
+        assertEquals(postCounter.get(), repository.getStatistics().getCount());
     }
 }
