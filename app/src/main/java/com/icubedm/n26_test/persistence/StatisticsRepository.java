@@ -21,10 +21,10 @@ public class StatisticsRepository {
     /**
      * While bean in spring boot by default is in the singleton scope, we don't need to have storage to be static
      */
-    List<TimestampedStatistics> storage = new ArrayList<>(60);
+    private volatile List<TimestampedStatistics> storage = new ArrayList<>(60);
 
     public void addNewTransaction(Transaction transaction) {
-        synchronized (this) {
+        synchronized (storage) {
             cleanup();
             for (TimestampedStatistics stat : storage) {
                 if (nonNull(stat) && stat.isSameSecond(transaction.getEpochMillis())) {
@@ -40,7 +40,7 @@ public class StatisticsRepository {
     }
 
     public Statistics getStatistics() {
-        synchronized (this) {
+        synchronized (storage) {
             cleanup();
         }
         return storage.stream()
