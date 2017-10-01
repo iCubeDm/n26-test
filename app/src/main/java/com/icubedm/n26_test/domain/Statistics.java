@@ -73,7 +73,7 @@ public class Statistics {
         return count;
     }
 
-    public Statistics merge(Statistics other) {
+    public Statistics mergeWith(Statistics other) {
         if (other == EMPTY) {
             return this;
         } else if (this == EMPTY) {

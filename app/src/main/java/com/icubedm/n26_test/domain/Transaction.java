@@ -4,6 +4,7 @@ import com.google.common.base.MoreObjects;
 
 public class Transaction {
 
+    private static final int MINUTE = 60000;
     private double amount;
     private long timestamp;
 
@@ -20,7 +21,11 @@ public class Transaction {
 
     boolean isLateFor(long currentEpochMillis) {
         long l = currentEpochMillis - timestamp;
-        return l >= 60000;
+        return l >= MINUTE;
+    }
+
+    public boolean isFutureFor(long currentEpochMillis) {
+        return currentEpochMillis < timestamp;
     }
 
     public double getAmount() {

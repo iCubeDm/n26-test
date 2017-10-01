@@ -23,8 +23,8 @@ public class StatisticsService {
 
         logger.info("Received a new transaction {}", transaction);
 
-        if (transaction.isLateFor(now)) {
-            logger.warn("Transaction {} is older than 60 second. Skipping.");
+        if (transaction.isLateFor(now) || transaction.isFutureFor(now)) {
+            logger.warn("Transaction {} is older than 60 second or is in future. Skipping.");
             return false;
         }
 
@@ -34,7 +34,7 @@ public class StatisticsService {
 
     public Statistics getStatistics() {
         logger.info("Requested application statistics for past 60 seconds");
-        return statisticsRepository.getStatistics().orElse(Statistics.EMPTY);
+        return statisticsRepository.getStatistics();
     }
 }
 

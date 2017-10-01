@@ -8,23 +8,25 @@ public class TimestampedStatistics {
     public static TimestampedStatistics EMPTY = new TimestampedStatistics(-1, Statistics.EMPTY);
 
     private final long second;
-    private final Statistics stat;
+    private final Statistics statistics;
 
-    private TimestampedStatistics(long second, Statistics stat) {
+    private TimestampedStatistics(long second, Statistics statistics) {
         this.second = second;
-        this.stat = stat;
+        this.statistics = statistics;
     }
 
     public TimestampedStatistics(Transaction transaction) {
-        this(transaction.getEpochMillis() / 1000, new Statistics(transaction.getAmount(), transaction.getAmount(), transaction.getAmount(), 1));
+        this(transaction.getEpochMillis() / 1000,
+             new Statistics(transaction.getAmount(), transaction.getAmount(), transaction.getAmount(), 1)
+        );
     }
 
     public long getSecond() {
         return second;
     }
 
-    public Statistics getStat() {
-        return stat;
+    public Statistics getStatistics() {
+        return statistics;
     }
 
     public TimestampedStatistics merge(TimestampedStatistics other) {
@@ -33,7 +35,7 @@ public class TimestampedStatistics {
         } else if (second < other.second) {
             return other;
         } else {
-            return new TimestampedStatistics(second, stat.merge(other.stat));
+            return new TimestampedStatistics(second, statistics.mergeWith(other.statistics));
         }
     }
 }
