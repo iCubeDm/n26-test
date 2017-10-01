@@ -48,6 +48,10 @@ public class Statistics {
 
     public Statistics() {
     }
+    public Statistics(Transaction transaction) {
+        this();
+        this.addTransaction(transaction);
+    }
 
     public double getSum() {
         return sum;

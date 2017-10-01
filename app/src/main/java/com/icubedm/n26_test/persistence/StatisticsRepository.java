@@ -34,7 +34,7 @@ public class StatisticsRepository {
             }
             storage.add(new TimestampedStatistics(
                     transaction.getEpochMillis(),
-                    new Statistics().addTransaction(transaction))
+                    new Statistics(transaction))
             );
         }
     }
@@ -53,10 +53,10 @@ public class StatisticsRepository {
     private void cleanup() {
         long now = nowEpochMilli();
         for (int i = 0; i < storage.size(); i++) {
-            if (storage.get(i) == null)
-                storage.remove(i);
-            else if (storage.get(i).isLateFor(now))
-                storage.remove(i);
+            if (storage.get(i) == null || storage.get(i).isLateFor(now)){
+                storage.set(i, storage.get(storage.size() - 1));
+                storage.remove(storage.size() - 1);
+            }
         }
         logger.debug("Storage cleanup is done for {}", now);
     }
