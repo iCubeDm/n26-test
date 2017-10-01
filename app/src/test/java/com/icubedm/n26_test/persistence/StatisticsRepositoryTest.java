@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 
 public class StatisticsRepositoryTest {
 
-    StatisticsRepository repository = new StatisticsRepository();
+    private StatisticsRepository repository = new StatisticsRepository();
 
     @Test
     public void testAddNewTransaction() {

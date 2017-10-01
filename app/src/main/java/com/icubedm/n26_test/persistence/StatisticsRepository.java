@@ -21,7 +21,7 @@ public class StatisticsRepository {
     /**
      * While bean in spring boot by default is in the singleton scope, we don't need to have storage to be static
      */
-    private volatile List<TimestampedStatistics> storage = new ArrayList<>(60);
+    private final List<TimestampedStatistics> storage = new ArrayList<>(60);
 
     public void addNewTransaction(Transaction transaction) {
         synchronized (storage) {
@@ -50,7 +50,7 @@ public class StatisticsRepository {
                 .getStatistics();
     }
 
-    private long cleanup() {
+    private void cleanup() {
         long now = nowEpochMilli();
         for (int i = 0; i < storage.size(); i++) {
             if (storage.get(i) == null)
@@ -59,6 +59,5 @@ public class StatisticsRepository {
                 storage.remove(i);
         }
         logger.debug("Storage cleanup is done for {}", now);
-        return now;
     }
 }
