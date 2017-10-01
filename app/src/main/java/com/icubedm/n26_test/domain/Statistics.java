@@ -1,5 +1,7 @@
 package com.icubedm.n26_test.domain;
 
+import java.util.Optional;
+
 public class Statistics {
 
     /**
@@ -22,14 +24,14 @@ public class Statistics {
      * single highest transaction
      * value in the last 60 seconds
      */
-    private double max = 0;
+    private Optional<Double> max = Optional.empty();
 
     /**
      * is a double specifying
      * single lowest transaction value
      * in the last 60 seconds
      */
-    private double min = 0;
+    private Optional<Double> min = Optional.empty();
 
     /**
      * is a long specifying
@@ -41,13 +43,14 @@ public class Statistics {
     public Statistics(double sum, double avg, double max, double min, long count) {
         this.sum = sum;
         this.avg = avg;
-        this.max = max;
-        this.min = min;
+        this.max = Optional.of(max);
+        this.min = Optional.of(min);
         this.count = count;
     }
 
     public Statistics() {
     }
+
     public Statistics(Transaction transaction) {
         this();
         this.addTransaction(transaction);
@@ -62,11 +65,11 @@ public class Statistics {
     }
 
     public double getMax() {
-        return max;
+        return max.orElse(0.0);
     }
 
     public double getMin() {
-        return min;
+        return min.orElse(0.0);
     }
 
     public long getCount() {
@@ -81,8 +84,15 @@ public class Statistics {
         this.count++;
         this.avg = (this.sum + transaction.getAmount()) / this.count;
         this.sum += transaction.getAmount();
-        this.max = Math.max(this.max, transaction.getAmount());
-        if (this.min == 0 || this.min > transaction.getAmount()) this.min = transaction.getAmount();
+
+        this.max = max.isPresent()
+                ? Optional.of(Math.max(this.max.get(), transaction.getAmount()))
+                : Optional.of(transaction.getAmount());
+
+        this.min = min.isPresent()
+                ? Optional.of(Math.min(this.min.get(), transaction.getAmount()))
+                : Optional.of(transaction.getAmount());
+
         return this;
     }
 }
