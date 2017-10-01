@@ -53,7 +53,7 @@ public class StatisticsRepositoryTest {
             System.out.println(String.format("Test with %s requests", number));
 
             final CountDownLatch latch = new CountDownLatch(number);
-            ExecutorService executor = Executors.newFixedThreadPool(5);
+            ExecutorService executor = Executors.newFixedThreadPool(20);
 
 
             for (int i = 0; i < number; i++) {

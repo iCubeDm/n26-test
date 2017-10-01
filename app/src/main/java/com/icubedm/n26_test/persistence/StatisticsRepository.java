@@ -23,22 +23,26 @@ public class StatisticsRepository {
      */
     List<TimestampedStatistics> storage = new ArrayList<>(60);
 
-    public synchronized void addNewTransaction(Transaction transaction) {
-        cleanup();
-        for (TimestampedStatistics stat : storage) {
-            if (nonNull(stat) && stat.isSameSecond(transaction.getEpochMillis())) {
-                stat.addTransaction(transaction);
-                return;
+    public void addNewTransaction(Transaction transaction) {
+        synchronized (this) {
+            cleanup();
+            for (TimestampedStatistics stat : storage) {
+                if (nonNull(stat) && stat.isSameSecond(transaction.getEpochMillis())) {
+                    stat.addTransaction(transaction);
+                    return;
+                }
             }
+            storage.add(new TimestampedStatistics(
+                    transaction.getEpochMillis(),
+                    new Statistics().addTransaction(transaction))
+            );
         }
-        storage.add(new TimestampedStatistics(
-                transaction.getEpochMillis(),
-                new Statistics().addTransaction(transaction))
-        );
     }
 
-    public synchronized Statistics getStatistics() {
-        cleanup();
+    public Statistics getStatistics() {
+        synchronized (this) {
+            cleanup();
+        }
         return storage.stream()
                 .filter(Objects::nonNull)
                 .reduce(TimestampedStatistics::mergeWith)
@@ -49,7 +53,7 @@ public class StatisticsRepository {
     private long cleanup() {
         long now = nowEpochMilli();
         for (int i = 0; i < storage.size(); i++) {
-            if(storage.get(i) == null)
+            if (storage.get(i) == null)
                 storage.remove(i);
             else if (storage.get(i).isLateFor(now))
                 storage.remove(i);
