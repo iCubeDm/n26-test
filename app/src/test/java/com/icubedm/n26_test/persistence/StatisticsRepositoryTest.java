@@ -44,34 +44,37 @@ public class StatisticsRepositoryTest {
     @Test
     public void testConcurrentWriteRequests_ShouldRegisterEveryTransaction() throws Exception {
 
-        final long now = DateTimeUtil.nowEpochMilli();
-        final int number = new Random().nextInt(1_000_000);
-
-        System.out.println(String.format("Test with %s requests", number));
-
-        final CountDownLatch latch = new CountDownLatch(number);
-        ExecutorService executor = Executors.newFixedThreadPool(5);
-
         AtomicLong postCounter = new AtomicLong(0);
+        final long now = DateTimeUtil.nowEpochMilli();
+        for (int j = 0; j < 10; j++) {
 
-        for (int i = 0; i < number; i++) {
-            executor.execute(() -> {
-                long randomTimestamp = now - new Random().nextInt(30) * 1000;
-                if (Math.random() > 0.5) {
-                    repository.addNewTransaction(new Transaction(10.0, randomTimestamp));
-                    postCounter.incrementAndGet();
-                } else {
-                    repository.getStatistics();
-                }
-                latch.countDown();
-            });
+            final int number = new Random().nextInt(1_000_000);
+
+            System.out.println(String.format("Test with %s requests", number));
+
+            final CountDownLatch latch = new CountDownLatch(number);
+            ExecutorService executor = Executors.newFixedThreadPool(5);
+
+
+            for (int i = 0; i < number; i++) {
+                executor.execute(() -> {
+                    long randomTimestamp = now - new Random().nextInt(30) * 1000;
+                    if (Math.random() > 0) {
+                        repository.addNewTransaction(new Transaction(10.0, randomTimestamp));
+                        postCounter.incrementAndGet();
+                    } else {
+                        repository.getStatistics();
+                    }
+                    latch.countDown();
+                });
+            }
+
+            latch.await();
+
+            executor.shutdown();
+            executor.awaitTermination(1, TimeUnit.SECONDS);
+
+            assertEquals(postCounter.get(), repository.getStatistics().getCount());
         }
-
-        latch.await(2, TimeUnit.SECONDS);
-
-        executor.shutdown();
-        executor.awaitTermination(100, TimeUnit.MILLISECONDS);
-
-        assertEquals(postCounter.get(), repository.getStatistics().getCount());
     }
 }
