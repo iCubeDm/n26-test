@@ -2,44 +2,40 @@ package com.icubedm.n26_test.persistence;
 
 import com.icubedm.n26_test.domain.Statistics;
 import com.icubedm.n26_test.domain.Transaction;
-import com.icubedm.n26_test.util.DateTimeUtil;
 
 public class TimestampedStatistics {
 
-    private long timestamp;
-    private Statistics statistics;
+    public static TimestampedStatistics EMPTY = new TimestampedStatistics(-1, Statistics.EMPTY);
 
-    TimestampedStatistics(long epochMillis, Statistics statistics) {
-        this.timestamp = epochMillis / 1000;
+    private final long second;
+    private final Statistics statistics;
+
+    private TimestampedStatistics(long second, Statistics statistics) {
+        this.second = second;
         this.statistics = statistics;
     }
 
-    void addTransaction(Transaction transaction) {
-        this.statistics.addTransaction(transaction);
+    public TimestampedStatistics(Transaction transaction) {
+        this(transaction.getEpochMillis() / 1000,
+             new Statistics(transaction.getAmount(), transaction.getAmount(), transaction.getAmount(), 1)
+        );
+    }
+
+    public long getSecond() {
+        return second;
     }
 
     public Statistics getStatistics() {
         return statistics;
     }
 
-    boolean isLateFor(long epochMillis) {
-        long l = epochMillis / 1000;
-        return l - this.timestamp >= 60;
-    }
-
-    boolean isSameSecond(long epochMillis) {
-        return this.timestamp == (epochMillis / 1000);
-    }
-
-    TimestampedStatistics mergeWith(TimestampedStatistics anotherStatistics) {
-        Statistics anotherStat = anotherStatistics.getStatistics();
-
-        long count = this.statistics.getCount() + anotherStat.getCount();
-        double sum = this.statistics.getSum() + anotherStat.getSum();
-        double avg = sum / count;
-        double max = Math.max(statistics.getMax(), anotherStat.getMax());
-        double min = Math.min(statistics.getMin(), anotherStat.getMin());
-
-        return new TimestampedStatistics(DateTimeUtil.nowEpochMilli(), new Statistics(sum, avg, max, min, count));
+    public TimestampedStatistics merge(TimestampedStatistics other) {
+        if (second > other.second) {
+            return this;
+        } else if (second < other.second) {
+            return other;
+        } else {
+            return new TimestampedStatistics(second, statistics.mergeWith(other.statistics));
+        }
     }
 }

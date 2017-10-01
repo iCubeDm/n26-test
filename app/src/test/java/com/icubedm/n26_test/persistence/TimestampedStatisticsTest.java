@@ -10,13 +10,12 @@ import static org.junit.Assert.*;
 public class TimestampedStatisticsTest {
 
     @Test
-    public void testAddTransaction() {
+    public void testCreateWithTransaction() {
 
         long now = DateTimeUtil.nowEpochMilli();
         Transaction tx = new Transaction(12.0, now);
 
-        TimestampedStatistics timestampedStatistics = new TimestampedStatistics(now, new Statistics());
-        timestampedStatistics.addTransaction(tx);
+        TimestampedStatistics timestampedStatistics = new TimestampedStatistics(tx);
         Statistics statistics = timestampedStatistics.getStatistics();
 
         assertEquals(12.0, statistics.getSum(), 0);
@@ -27,41 +26,17 @@ public class TimestampedStatisticsTest {
     }
 
     @Test
-    public void testIsLateFor() {
-        long now = 1000;
-        TimestampedStatistics stat = new TimestampedStatistics(now, new Statistics());
-
-        assertTrue(stat.isLateFor(now + 60000));
-        assertFalse(stat.isLateFor(now + 59999));
-    }
-
-    @Test
-    public void testIsSameSecond() {
-
-        long now = 1000;
-        TimestampedStatistics stat = new TimestampedStatistics(now, new Statistics());
-
-        assertTrue(stat.isSameSecond(now));
-        assertTrue(stat.isSameSecond(now + 1));
-        assertTrue(stat.isSameSecond(now + 999));
-        assertFalse(stat.isSameSecond(now - 1));
-        assertFalse(stat.isSameSecond(now + 1000));
-    }
-
-    @Test
     public void testMergeWith() {
 
         long now = DateTimeUtil.nowEpochMilli();
 
         Transaction tx = new Transaction(12.0, now);
-        TimestampedStatistics timestampedStatistics = new TimestampedStatistics(now, new Statistics());
-        timestampedStatistics.addTransaction(tx);
+        TimestampedStatistics timestampedStatistics = new TimestampedStatistics(tx);
 
         Transaction tx1 = new Transaction(10.0, now);
-        TimestampedStatistics timestampedStatistics1 = new TimestampedStatistics(now, new Statistics());
-        timestampedStatistics1.addTransaction(tx1);
+        TimestampedStatistics timestampedStatistics1 = new TimestampedStatistics(tx1);
 
-        Statistics statistics = timestampedStatistics.mergeWith(timestampedStatistics1).getStatistics();
+        Statistics statistics = timestampedStatistics.merge(timestampedStatistics1).getStatistics();
 
         assertEquals(22.0, statistics.getSum(), 0);
         assertEquals(11.0, statistics.getAvg(), 0);

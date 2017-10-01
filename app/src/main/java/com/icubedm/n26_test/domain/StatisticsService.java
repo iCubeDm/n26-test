@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class StatisticsService {
 
@@ -21,8 +23,8 @@ public class StatisticsService {
 
         logger.info("Received a new transaction {}", transaction);
 
-        if (transaction.isLateFor(now)) {
-            logger.warn("Transaction {} is older than 60 second. Skipping.");
+        if (transaction.isLateFor(now) || transaction.isFutureFor(now)) {
+            logger.warn("Transaction {} is older than 60 second or is in future. Skipping.");
             return false;
         }
 

@@ -21,12 +21,12 @@ public class StatisticsTest {
 
     @Test
     public void testCreateWithCustomState() {
-        double sum = 100.0;
-        double avg = 53.0;
+        double sum = 1000.0;
+        double avg = 40.0;
         double max = 123.0;
         double min = 12.0;
-        long count = 23;
-        Statistics stat = new Statistics(sum, avg, max, min, count);
+        long count = 25;
+        Statistics stat = new Statistics(sum, max, min, count);
 
         assertEquals(count, stat.getCount());
         assertEquals(sum, stat.getSum(), 0);
@@ -36,25 +36,37 @@ public class StatisticsTest {
     }
 
     @Test
-    public void testStateMutation() {
-        Statistics stat = new Statistics();
+    public void testMerge() {
+        Statistics stat = new Statistics(10.0, 10.0, 10.0, 1);
+        Statistics stat1 = new Statistics(12.0, 12.0, 12.0, 1);
 
-        Transaction tx1 = new Transaction(10.0, 1000);
+        Statistics result = stat.mergeWith(stat1);
 
-        stat.addTransaction(tx1);
-        assertEquals(1, stat.getCount());
-        assertEquals(10.0, stat.getSum(), 0);
-        assertEquals(10.0, stat.getAvg(), 0);
-        assertEquals(10.0, stat.getMin(), 0);
-        assertEquals(10.0, stat.getMax(), 0);
+        assertEquals(2, result.getCount());
+        assertEquals(22.0, result.getSum(), 0);
+        assertEquals(11.0, result.getAvg(), 0);
+        assertEquals(10.0, result.getMin(), 0);
+        assertEquals(12.0, result.getMax(), 0);
+    }
 
-        Transaction tx2 = new Transaction(12.0, 1000);
+    @Test
+    public void testMergeWithEmpty() {
+        Statistics stat = new Statistics(10.0, 10.0, 10.0, 1);
 
-        stat.addTransaction(tx2);
-        assertEquals(2, stat.getCount());
-        assertEquals(22.0, stat.getSum(), 0);
-        assertEquals(11.0, stat.getAvg(), 0);
-        assertEquals(10.0, stat.getMin(), 0);
-        assertEquals(12.0, stat.getMax(), 0);
+        Statistics result = stat.mergeWith(Statistics.EMPTY);
+
+        assertEquals(1, result.getCount());
+        assertEquals(10.0, result.getSum(), 0);
+        assertEquals(10.0, result.getAvg(), 0);
+        assertEquals(10.0, result.getMin(), 0);
+        assertEquals(10.0, result.getMax(), 0);
+
+        result = Statistics.EMPTY.mergeWith(stat);
+
+        assertEquals(1, result.getCount());
+        assertEquals(10.0, result.getSum(), 0);
+        assertEquals(10.0, result.getAvg(), 0);
+        assertEquals(10.0, result.getMin(), 0);
+        assertEquals(10.0, result.getMax(), 0);
     }
 }
